@@ -124,9 +124,18 @@ const configureMQTT = async (commands, client, mqttHA) => {
         const configurations = new Map();
         const run = async () => {
             const states = new Map();
-            const v = vehicle;
-            logger.info('Requesting diagnostics');
-            const statsRes = await commands.diagnostics({diagnosticItem: v.getSupported()});
+            const diagnosticConstants = Commands.CONSTANTS.DIAGNOSTICS;
+            const diagnosticsThatMayNot429 = [
+                // percentage
+                diagnosticConstants.EV_BATTERY_LEVEL,
+                // charging vs. not
+                diagnosticConstants.EV_CHARGE_STATE,
+                // plugged in vs. not
+                diagnosticConstants.EV_PLUG_STATE,
+                diagnosticConstants.VEHICLE_RANGE
+            ];
+            logger.info(`Requesting diagnostics ${diagnosticsThatMayNot429}`);
+            const statsRes = await commands.diagnostics({diagnosticItem: diagnosticsThatMayNot429});
             logger.info('Diagnostic request status', {status: _.get(statsRes, 'status')});
             const stats = _.map(
                 _.get(statsRes, 'response.data.commandResponse.body.diagnosticResponse'),
