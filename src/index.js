@@ -187,6 +187,7 @@ const configureMQTT = async (commands, client, mqttHA) => {
             });
 
         await main();
+        logger.info(`Will run every ${onstarConfig.refreshInterval} milliseconds.`);
         setInterval(main, onstarConfig.refreshInterval);
     } catch (e) {
         logger.error('Main function error.', {error: e});
